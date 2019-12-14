@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sentiment Analysis</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/css/jqcloud.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../static/js/jqcloud.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script type="text/javascript" src="../static/js/graph.js"></script>
+  <script type="text/javascript" src="../static/js/dash.js"></script>
+    <style> /* set the CSS */
+    path {
+      stroke: steelblue;
+      stroke-width: 1;
+      fill: none;
+    }
+    .axis path, .axis line {
+      fill: none;
+      stroke: grey;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
+    .area {
+      fill: #F0F8FF;
+      stroke-width: 0;
+    }
+  </style>
+</script>
+
+
+  <script type=text/javascript>
+			$(function() {
+			  $('a#get_data').bind('click', function() {
+				$.getJSON('/getData', {
+
+				  name: $('Select[name="company"]').val(),
+				}, function(data) {
+				    oData = data.result;
+				    oData.key = data.key;
+
+                     $('#word_cloud').empty();
+                     $('#panel1').empty()
+                     $('#panel2').empty()
+                     $('#word_cloud').jQCloud('destroy');
+                     $('#word_cloud').jQCloud(data.cloud, {
+                            width: 500,
+                            height: 300
+                     });
+                     dashboard('#panel1',oData);
+				     //lineGraph('#panel2',oData);
+				     corelationGraph('#corelation',oData)
+				     sentiGraph('#senti',oData)
+				     //regression('#regression',oData)
+ 				});
+				return false;
+			  });
+			});
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">CSHack3</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="/crawler">Crawler</a></li>
+    </ul>
+    <form class="navbar-form navbar-right">
+      <div class="form-group">
+          <Select class="form-control" name="company" id="company">
+              {% for name in data.keywords %}
+              <option name={{name}}>{{name}}</option>
+              {% endfor %}
+          </Select>
+      </div>
+        <a href=# id=get_data><button class="btn btn-default">Submit</button></a>
+    </form>
+  </div>
+</nav>
+
+<section id="sect">
+    <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Positive/Negetive/Neutral Graph</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="form-group col-xs-12" id="panel1">
+                        <h3>Positive/Negetive/Neutral</h3>
+
+                    </div>
+                    <!--<div class="form-group col-xs-7" id="panel2">
+                        <h3>Stock Price Movement</h3>
+
+                    </div>-->
+                </div>
+            </div>
+        </div>
+         <div class="panel panel-primary">
+            <div class="panel-heading">Feature Cloud</div>
+            <div class="row">
+                    <div class="form-group col-xs-4">
+                    </div>
+                    <div class="form-group col-xs-4" id="word_cloud">
+                    </div>
+                    <div class="form-group col-xs-4">
+                    </div>
+                </div>
+         </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">Corelation</div>
+            <div class="row">
+                    <div class="form-group col-xs-6" id="corelation">
+                    </div>
+
+                    <div class="form-group col-xs-6" id="senti">
+                    </div>
+                </div>
+         </div>
+
+         <div class="panel panel-primary">
+            <div class="panel-heading">Regression</div>
+            <div class="row">
+                    <div class="form-group col-xs-12" id="regression">
+                    </div>
+                </div>
+         </div>
+
+    </div>
+</section>
+
+</body>
+</html>
